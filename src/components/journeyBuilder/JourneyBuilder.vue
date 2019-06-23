@@ -65,275 +65,47 @@ export default {
         EntrySource,
     },
     mounted() {
-
-        const diagram = this.createDiagram('canvasID')
-        this.styleLinkTemplate(diagram)
-        this.$refs['entrySource'].attachTemplate(diagram)
-        // entrySource.createPalette('EntrySourceID')
-        // this.drawWorkflow(diagram)
-
-        diagram.nodeTemplate =
-            $(go.Node, go.Panel.Horizontal, {
-                    locationObjectName: "SHAPE",
-                    locationSpot: go.Spot.MiddleLeft,
-                    portSpreading: go.Node.SpreadingPacked // rather than the default go.Node.SpreadingEvenly
-                },
-                $(go.TextBlock,{
-        margin: 2,
-        font: '9pt helvetica, arial, sans-serif',
-        maxSize: new go.Size(80, 80),
-        wrap: _TBlock.WrapFit,
-        editable: true,
-        stroke: "black"
-    }, {
-                        name: "LTEXT"
-                    },
-                    new go.Binding("text", "ltext")),
-                $(go.Shape, {
-                        name: "SHAPE",
-                        figure: "Rectangle",
-                        fill: "#2E8DEF", // default fill color
-                        stroke: null,
-                        strokeWidth: 0,
-                        portId: "",
-                        fromSpot: go.Spot.RightSide,
-                        toSpot: go.Spot.LeftSide,
-                        height: 50,
-                        width: 20
-                    },
-                    new go.Binding("fill", "color")),
-                $(go.TextBlock, {
-        margin: 2,
-        font: '9pt helvetica, arial, sans-serif',
-        maxSize: new go.Size(80, 80),
-        wrap: _TBlock.WrapFit,
-        editable: true,
-        stroke: "black"
-    }, {
-                        name: "TEXT"
-                    },
-                    new go.Binding("text"))
-            );
-        var linkSelectionAdornmentTemplate =
-            $(go.Adornment, "Link",
-                $(go.Shape, {
-                    isPanelMain: true,
-                    fill: null,
-                    stroke: "rgba(0, 0, 255, 0.3)",
-                    strokeWidth: 0
-                }) // use selection object's strokeWidth
-            );
-        diagram.linkTemplate =
-            $(go.Link, go.Link.Bezier, {
-                    selectionAdornmentTemplate: linkSelectionAdornmentTemplate,
-                    layerName: "Background",
-                    fromEndSegmentLength: 150,
-                    toEndSegmentLength: 150,
-                    adjusting: go.Link.End
-                },
-                $(go.Shape, {
-                        strokeWidth: 4,
-                        stroke: "rgba(173, 173, 173, 0.25)"
-                    },
-                    new go.Binding("stroke", "pink"),
-                    new go.Binding("strokeWidth", "width"))
-            );
-
-        this.diagram = diagram
-
-    },
-    data() {
-        return {
-            diagram: {},
-            creativeConfig: {},
-            mutated: false,
-            active: false,
-            name: "",
-            configDialog: false,
-            modelId: 0,
-            titleLookup: {},
-
-        }
-    },
-    watch: {
-
-    },
-    created() {
-
-    },
-    methods: {
-        styleLinkTemplate: (diagram) => {
-            diagram.linkTemplate =
-                $(go.Link, // the whole link panel
-                    {
-                        routing: go.Link.AvoidsNodes,
-                        curve: go.Link.JumpOver,
-                        corner: 5,
-                        toShortLength: 4,
-                        relinkableFrom: true,
-                        relinkableTo: true,
-                        reshapable: true,
-                        resegmentable: true,
-                        // mouse-overs subtly highlight links:
-                        mouseEnter: function (e, link) {
-                            link.findObject("HIGHLIGHT").stroke = "rgba(30,144,255,0.2)";
-                        },
-                        mouseLeave: function (e, link) {
-                            link.findObject("HIGHLIGHT").stroke = "transparent";
-                        },
-                        selectionAdorned: false
-                    },
-                    new go.Binding("points").makeTwoWay(),
-                    $(go.Shape, // the highlight shape, normally transparent
-                        {
-                            isPanelMain: true,
-                            strokeWidth: 8,
-                            stroke: "transparent",
-                            name: "HIGHLIGHT"
-                        }),
-                    $(go.Shape, // the link path shape
-                        {
-                            isPanelMain: true,
-                            stroke: "gray",
-                            strokeWidth: 2
-                        },
-                        new go.Binding("stroke", "isSelected", function (sel) {
-                            return sel ? "dodgerblue" : "gray";
-                        }).ofObject()),
-                    $(go.Shape, // the arrowhead
-                        {
-                            toArrow: "standard",
-                            strokeWidth: 0,
-                            fill: "gray"
-                        }),
-                    $(go.Panel, "Auto", // the link label, normally not visible
-                        {
-                            visible: false,
-                            name: "LABEL",
-                            segmentIndex: 2,
-                            segmentFraction: 0.5
-                        },
-                        new go.Binding("visible", "visible").makeTwoWay(),
-                        $(go.Shape, "RoundedRectangle", // the label shape
-                            {
-                                fill: "#F8F8F8",
-                                strokeWidth: 0
-                            }),
-                        $(_TBlock, "Yes", // the label
-                            {
-                                textAlign: "center",
-                                font: "9pt helvetica, arial, sans-serif",
-                                stroke: "#333333",
-                                editable: true
-                            },
-                            new go.Binding("text").makeTwoWay())
-                    )
-                );
-
-            // temporary links used by LinkingTool and RelinkingTool are also orthogonal:
-            diagram.toolManager.linkingTool.temporaryLink.routing = go.Link.Orthogonal;
-            diagram.toolManager.relinkingTool.temporaryLink.routing = go.Link.Orthogonal;
-        },
-        geoFunc: function (geoname) {
-            var geo = icons[geoname];
-            if (geo === undefined) geo = icons["heart"]; // use this for an unknown icon name
-            if (typeof geo === "string") {
-                geo = icons[geoname] = go.Geometry.parse(geo, true); // fill each geometry
-            }
-            return geo;
-        },
-        changeCategory: function (obj) {
-            var node = obj.part;
-            if (node) {
-                var diagram = node.diagram;
-                diagram.startTransaction("changeCategory");
-                var cat = diagram.model.getCategoryForNodeData(node.data);
-                cat = cat + "-dropped"
-                diagram.model.setCategoryForNodeData(node.data, cat);
-                diagram.commitTransaction("changeCategory");
-            }
-        },
-        uuidGen: function () {
-            var dt = new Date().getTime();
-            var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-                var r = (dt + Math.random() * 16) % 16 | 0;
-                dt = Math.floor(dt / 16);
-                return (c == 'x' ? r : (r & 0x3 | 0x8)).toString(16);
-            });
-            return uuid
-        },
-        makePort: (name, align, spot, output, input) => {
-            var horizontal = align.equals(_SpotTop) || align.equals(_SpotBottom);
-            return $(go.Shape, {
-                fill: "transparent",
-                strokeWidth: 0,
-                width: horizontal ? NaN : 8,
-                height: !horizontal ? NaN : 8,
-                alignment: align, // align the port on the main Shape
-                stretch: (horizontal ? go.GraphObject.Horizontal : go.GraphObject.Vertical),
-                portId: name, // declare this object to be a "port"
-                fromSpot: spot, // declare where links may connect at this port
-                fromLinkable: output, // declare whether the user may draw links from here
-                toSpot: spot, // declare where links may connect at this port
-                toLinkable: input, // declare whether the user may draw links to here
-                cursor: "pointer", // show a different cursor to indicate potential link point
-                mouseEnter: function (e, port) { // the PORT argument will be this Shape
-                    if (!e.diagram.isReadOnly) port.fill = "rgba(255,0,255,0.5)";
-                },
-                mouseLeave: function (e, port) {
-                    port.fill = "transparent";
-                }
-            });
-        },
-        createDiagram: function (div) {
-            var t = this;
-            var diagram = $(go.Diagram,
-                div, {
-                    "LinkDrawn": t.showLinkLabel, // this DiagramEvent listener is defined below
-                    "LinkRelinked": t.showLinkLabel,
-                    "undoManager.isEnabled": true, // enable undo & redo
-                    layout: $(go.TreeLayout, {
+      console.log(this.go)
+      console.log(document.source)
+      var go = this.go
+      var $ = go.GraphObject.make;
+      this.diagram = $(go.Diagram, "goDiaDiv",  // create a Diagram for the DIV HTML element
+        { // enable undo & redo
+          "undoManager.isEnabled": true,
+          maxSelectionCount: 1 ,
+          "LinkDrawn": this.showLinkLabel,  // this DiagramEvent listener is defined below
+            "LinkRelinked": this.showLinkLabel,
+            layout: $(go.TreeLayout, {
                         angle: (true ? 0 : 90),
                         nodeSpacing: 4
                     }),
                     initialContentAlignment: go.Spot.Left
-                });
-            diagram.addDiagramListener('ObjectSingleClicked', (obj) => {
-                debugger
-                obj.diagram.selection.each(tt => {
-                    obj.diagram.startTransaction("changeCategory");
-                    var cat = obj.diagram.model.getCategoryForNodeData(tt.data);
-                    console.log(cat)
-                    cat = cat.split('-')[0] + "-selected"
-                    obj.diagram.model.setCategoryForNodeData(tt.data, cat);
-                    if (obj.diagram.previousSelectionData) {
-                        cat = obj.diagram.model.getCategoryForNodeData(obj.diagram.previousSelectionData)
-                        cat = cat.split("-")[0] - "dropped"
-                        obj.diagram.model.setCategoryForNodeData(obj.diagram.previousSelectionData, cat);
-                    }
-                    obj.diagram.previousSelectionData = tt.data
-                    obj.diagram.commitTransaction("changeCategory");
-                })
-            })
-
-            diagram.addDiagramListener('ExternalObjectsDropped', (dropedEvent) => {
-                // debugger
-                this.changeCategory(dropedEvent)
-                const groupBy = key => array =>
+        }); 
+        this.$refs['entrySource'].addTemplates(this.diagram)
+        this.linkTemplate(this.diagram)
+      this.diagram.addDiagramListener("ObjectSingleClicked",
+        function(e) {
+          var part = e.subject.part;
+          if (!(part instanceof go.Link)){
+          //  debugger
+          }
+        });
+        
+      this.diagram.addDiagramListener("ExternalObjectsDropped",
+        function(e) {
+          var part = e.subject.part;
+          const groupBy = key => array =>
                     array.reduce((objectsByKeyValue, obj) => {
                         const value = obj[key];
                         objectsByKeyValue[value] = (objectsByKeyValue[value] || []).concat(obj);
                         return objectsByKeyValue;
                     }, {});
-
                 const groupByCategory = groupBy('category');
-
                 const findBestFoster = () => {
                     //TODO add sofistication later, now return the nearest one
                     const minDist = Math.min(...temp.map(e => e.distance))
                     return temp.find(e => e.distance == minDist)
                 }
-
                 dropedEvent.subject.each((node) => {
                     if (node.data) {
                         debugger
@@ -364,11 +136,119 @@ export default {
                     }
                 })
             })
+        });
+    },
+    data() {
+        return {
+            diagram: {},
+            creativeConfig: {},
+            mutated: false,
+            active: false,
+            name: "",
+            configDialog: false,
+            modelId: 0,
+            titleLookup: {},
 
-            return diagram
-        },
+        }
+    },
+    watch: {
 
-        manageConfigChanges(config) {
+    },
+    created() {
+
+    },
+    methods: {
+
+nodeStyle() {
+        return [
+          // The Node.location comes from the "loc" property of the node data,
+          // converted by the Point.parse static method.
+          // If the Node.location is changed, it updates the "loc" property of the node data,
+          // converting back using the Point.stringify static method.
+          new go.Binding("location", "loc", go.Point.parse).makeTwoWay(go.Point.stringify),
+          {
+            // the Node.location is at the center of each node
+            locationSpot: go.Spot.Center
+          }
+        ];
+      },
+
+      makePort(name, align, spot, output, input) {
+      var go = this.go
+
+        var horizontal = align.equals(go.Spot.Top) || align.equals(go.Spot.Bottom);
+        // the port is basically just a transparent rectangle that stretches along the side of the node,
+        // and becomes colored when the mouse passes over it
+        return go.GraphObject.make(go.Shape,
+          {
+            fill: "transparent",  // changed to a color in the mouseEnter event handler
+            strokeWidth: 0,  // no stroke
+            width: horizontal ? NaN : 8,  // if not stretching horizontally, just 8 wide
+            height: !horizontal ? NaN : 8,  // if not stretching vertically, just 8 tall
+            alignment: align,  // align the port on the main Shape
+            stretch: (horizontal ? go.GraphObject.Horizontal : go.GraphObject.Vertical),
+            portId: name,  // declare this object to be a "port"
+            fromSpot: spot,  // declare where links may connect at this port
+            fromLinkable: output,  // declare whether the user may draw links from here
+            toSpot: spot,  // declare where links may connect at this port
+            toLinkable: input,  // declare whether the user may draw links to here
+            cursor: "pointer",  // show a different cursor to indicate potential link point
+            mouseEnter: function(e, port) {  // the PORT argument will be this Shape
+              if (!e.diagram.isReadOnly) port.fill = "rgba(255,0,255,0.5)";
+            },
+            mouseLeave: function(e, port) {
+              port.fill = "transparent";
+            }
+          });
+      },
+      linkTemplate(diagram){
+        var go = this.go
+        diagram.linkTemplate = 
+        go.GraphObject.make(go.Link,  // the whole link panel
+          {
+            routing: go.Link.AvoidsNodes,
+            curve: go.Link.JumpOver,
+            corner: 5, toShortLength: 4,
+            relinkableFrom: true,
+            relinkableTo: true,
+            reshapable: true,
+            resegmentable: true,
+            // mouse-overs subtly highlight links:
+            mouseEnter: function(e, link) { link.findObject("HIGHLIGHT").stroke = "rgba(30,144,255,0.2)"; },
+            mouseLeave: function(e, link) { link.findObject("HIGHLIGHT").stroke = "transparent"; },
+            selectionAdorned: false
+          },
+          new go.Binding("points").makeTwoWay(),
+          go.GraphObject.make(go.Shape,  // the highlight shape, normally transparent
+            { isPanelMain: true, strokeWidth: 8, stroke: "transparent", name: "HIGHLIGHT" }),
+          go.GraphObject.make(go.Shape,  // the link path shape
+            { isPanelMain: true, stroke: "gray", strokeWidth: 2 },
+            new go.Binding("stroke", "isSelected", function(sel) { return sel ? "dodgerblue" : "gray"; }).ofObject()),
+          go.GraphObject.make(go.Shape,  // the arrowhead
+            { toArrow: "standard", strokeWidth: 0, fill: "gray" }),
+          go.GraphObject.make(go.Panel, "Auto",  // the link label, normally not visible
+            { visible: false, name: "LABEL", segmentIndex: 2, segmentFraction: 0.5 },
+            new go.Binding("visible", "visible").makeTwoWay(),
+            go.GraphObject.make(go.Shape, "RoundedRectangle",  // the label shape
+              { fill: "#F8F8F8", strokeWidth: 0 }),
+            go.GraphObject.make(go.TextBlock, "Yes",  // the label
+              {
+                textAlign: "center",
+                font: "10pt helvetica, arial, sans-serif",
+                stroke: "#333333",
+                editable: true
+              },
+              new go.Binding("text").makeTwoWay())
+          )
+        );
+      },
+      // Make link labels visible if coming out of a "conditional" node.
+      // This listener is called by the "LinkDrawn" and "LinkRelinked" DiagramEvents.
+      showLinkLabel(e) {
+        var label = e.subject.findObject("LABEL");
+        if (label !== null) label.visible = (e.subject.fromNode.data.category === "Conditional");
+      },
+      manageConfigChanges(config) {
             debugger
             var node = this.diaCopy.model.findNodeDataForKey(config.nodeKey)
             if (node) {
@@ -392,32 +272,8 @@ export default {
                 this.name = this.config.name
                 this.active = this.config.active
                 diagram.model = go.Model.fromJson(this.config.data)
-
             }
         },
-
-        addDecisionSplit(e, obj) {
-            var uuid = this.create_UUID()
-            this.diaCopy.model.addNodeData({
-                parent: obj.part.data.key,
-                key: uuid,
-                category: 'flow',
-                text: "Decision split"
-            })
-        },
-
-        addStyleForCustomer(diagram) {
-            diagram.nodeTemplateMap.add("Customer",
-                $(_Node, "Table", nStyle(),
-                    $(go.Panel, "Vertical",
-                        $(go.Shape, "RoundedRectangle", sStyle('#64cf84')),
-                        $(_TBlock, tStyle(), new go.Binding("text").makeTwoWay())
-                    ),
-                    this.makePort("L", _SpotLeft, _SpotLeft, true, true),
-                    // this.addContextMenu()
-                ));
-        },
-
     },
     computed: {
 
