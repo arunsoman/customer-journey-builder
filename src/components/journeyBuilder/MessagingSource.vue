@@ -81,7 +81,7 @@ export default {
                                 font: "bold 12px sans-serif"
                             },
                             new go.Binding("text", "name")),
-                        makePort("L", go.Spot.Left, go.Spot.Left, true, false),
+                        makePort("L", go.Spot.Left, go.Spot.Left, false, true),
                         makePort("R", go.Spot.Right, go.Spot.Right, true, false), {
                             toolTip: $("ToolTip", {
                                     "Border.stroke": "gray",

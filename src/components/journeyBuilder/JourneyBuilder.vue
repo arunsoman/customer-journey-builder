@@ -7,9 +7,8 @@
                 <FlowSource ref="flowSource" :diagram="diagram" style="height:200px;width:calc(100%); border: 1px solid gray;" />
                 <MessagingSource ref="messageSource" :diagram="diagram" style="height:200px;width:calc(100%); border: 1px solid gray;" />
                 <CustomerUpdate ref="customerSource" :diagram="diagram" style="height:200px;width:calc(100%); border: 1px solid gray;" />
-                
-                
-                       </v-layout>
+
+            </v-layout>
         </v-flex>
 
         <v-flex sm8 ml-3 mt-2>
@@ -90,6 +89,9 @@ export default {
         this.$refs['customerSource'].addTemplates(this.diagram)
         this.$refs['messageSource'].addTemplates(this.diagram)
         this.linkTemplate(this.diagram)
+        this.diagram.addDiagramListener("Modified", function (e) {
+            console.log("activate save")
+        });
         this.diagram.addDiagramListener("ObjectSingleClicked",
             function (e) {
                 var part = e.subject.part;
@@ -112,11 +114,11 @@ export default {
                     const group = groupByCategory(fosters)
                     //TODO add sofistication later, now return the nearest one
                     var temp = []
-                            for (var property in group) {
-                                if (group.hasOwnProperty(property)) {
-                                    temp.push(group[property].sort((a, b) => a.distance - b.distance)[0])
-                                }
-                            }
+                    for (var property in group) {
+                        if (group.hasOwnProperty(property)) {
+                            temp.push(group[property].sort((a, b) => a.distance - b.distance)[0])
+                        }
+                    }
                     const minDist = Math.min(...temp.map(e => e.distance))
                     return temp.find(e => e.distance == minDist)
                 }
@@ -136,9 +138,9 @@ export default {
                                     direction: childLoc.directionPoint(nodeLoc)
                                 }
                             })
-                        if(fosters.length > 0){
-                          const best = findBestFoster(fosters)
-                          dia.startTransaction("make new link");
+                        if (fosters.length > 0) {
+                            const best = findBestFoster(fosters)
+                            dia.startTransaction("make new link");
                             dia.model.addLinkData({
                                 from: best.key,
                                 to: child.data.key
@@ -148,6 +150,10 @@ export default {
                     }
                 })
             })
+            if(this.config){
+              this.diagram.model = go.Model.fromJson(this.config)
+              debugger
+            }
     },
     data() {
         return {
@@ -169,7 +175,21 @@ export default {
 
     },
     methods: {
-
+        addContextMenu() {
+            var contextObj = {
+                contextMenu: // define a context menu for each node
+                    $("ContextMenu", // that has one button
+                        $("ContextMenuButton",
+                            $(go.TextBlock, "Configure"), {
+                                click: (context) => {
+                                    console.log(context)
+                                }
+                            })
+                        // more ContextMenuButtons would go here
+                    )
+            }
+            return contextObj
+        },
         nodeStyle() {
             return [
                 // The Node.location comes from the "loc" property of the node data,
@@ -297,6 +317,8 @@ export default {
             //TODO make network call and toggle the active field
             //if network activity success
             this.mutated = !(this.mutated)
+            var result = this.diagram.model.toJson()
+            debugger
         },
         onStatusChange() {
             debugger

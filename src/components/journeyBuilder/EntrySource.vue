@@ -49,6 +49,7 @@ export default {
             ];
         },
         paletteTemplate(diagram) {
+          var contextMenu = this.$parent.addContextMenu()
             var makePort = this.$parent.makePort
             var go = this.go
             var colors = this.colors
@@ -86,7 +87,7 @@ export default {
                                     },
                                     new go.Binding("text", "toolTip")))
                         }
-                    )
+                    ),contextMenu
                 )
             diagram.nodeTemplateMap.add("sourcePalette", template)
             var p = $(go.Palette, "EntrySourceID")

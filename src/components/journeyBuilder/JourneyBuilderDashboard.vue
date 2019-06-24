@@ -182,46 +182,24 @@ export default {
                 ]
             },
             sample: {
-                "class": "go.TreeModel",
-                "linkFromPortIdProperty": "fromPort",
-                "linkToPortIdProperty": "toPort",
-                "nodeDataArray": [{
-                        "category": "EntrySource",
-                        'blockId': "Audience",
-                        "text": "Audience List",
-                        "key": -13,
-                    },
-                    {
-                        "key": -1,
-                        'blockId': "Decision split",
-                        "parent": -13,
-                        "category": "Flow",
-                        "text": "Decision split"
-                    },
-                    {
-                        'blockId': "Sms",
-                        "category": "Activity",
-                        "key": 0,
-                        "parent": -1,
-                        "text": "Thank you...."
-                    },
-                    {
-                        'blockId': "Email",
-                        "category": "Activity",
-                        "key": 10,
-                        "parent": -1,
-                        "text": "Thank you...."
-                    },
-                    {
-                        'blockId': "Wait",
-                        "category": "Flow",
-                        "key": -19,
-                        "parent": 0,
-                        "text": "3 Weeks"
-                    },
-
-                ],
-
+                 "class": "GraphLinksModel",
+  "nodeDataArray": [ 
+{"name":"Events", "iconUri":"../../assets/AddContact.svg", "toolTip":"Some tool tip text2", "category":"sourcePalette", "key":-2, "loc":"30.00000000000003 101.49619140625003"},
+{"name":"Decision\nSplit", "iconUri":"../../assets/SecisionSplit.svg", "toolTip":"Decision\nSplit Some tool tip text", "category":"Flow", "key":-3, "loc":"143.00781250000006 101.49619140625012"},
+{"name":"WhatsApp", "iconUri":"../../assets/SendSMS.svg", "toolTip":"Some tool tip text2", "category":"MessagingPalette", "key":-4, "loc":"263.67871093750006 66.99746093750002"},
+{"name":"Sms", "iconUri":"../../assets/SendSMS.svg", "toolTip":"Some tool tip text2", "category":"MessagingPalette", "key":-5, "loc":"256.0156250000001 135.994921875"},
+{"name":"EngagementSplit", "iconUri":"../../assets/EngagementSplit.svg", "toolTip":"EngagementSplit Some tool tip text2", "category":"Flow", "key":-6, "loc":"408.34667968749994 66.99746093750002"},
+{"name":"Email", "iconUri":"../../assets/SendEmail.svg", "toolTip":"Some tool tip text", "category":"MessagingPalette", "key":-1, "loc":"545.3515625 32.49873046875"},
+{"name":"WhatsApp", "iconUri":"../../assets/SendSMS.svg", "toolTip":"Some tool tip text2", "category":"MessagingPalette", "key":-7, "loc":"553.0146484375 101.49619140624986"}
+ ],
+  "linkDataArray": [ 
+{"from":-2, "to":-3, "points":[60,101.49619140625,70,101.49619140625,85,101.49619140625,85,101.49619140625,100,101.49619140625,110,101.49619140625]},
+{"from":-3, "to":-4, "points":[176.015625,101.49619140625,186.015625,101.49619140625,201.015625,101.49619140625,201.015625,66.99746093750001,216.015625,66.99746093750001,226.015625,66.99746093750001]},
+{"from":-3, "to":-5, "points":[176.015625,101.49619140625,186.015625,101.49619140625,201.015625,101.49619140625,201.015625,135.994921875,216.015625,135.994921875,226.015625,135.994921875]},
+{"from":-4, "to":-6, "points":[301.341796875,66.99746093750001,311.341796875,66.99746093750001,326.341796875,66.99746093750001,326.341796875,66.99746093750001,341.341796875,66.99746093750001,351.341796875,66.99746093750001]},
+{"from":-6, "to":-1, "points":[465.3515625,66.99746093750001,475.3515625,66.99746093750001,490.3515625,66.99746093750001,490.3515625,32.49873046875,505.3515625,32.49873046875,515.3515625,32.49873046875]},
+{"from":-6, "to":-7, "points":[465.3515625,66.99746093750001,475.3515625,66.99746093750001,490.3515625,66.99746093750001,490.3515625,101.49619140624999,505.3515625,101.49619140624999,515.3515625,101.49619140624999]}
+ ]
             }
         }
     },

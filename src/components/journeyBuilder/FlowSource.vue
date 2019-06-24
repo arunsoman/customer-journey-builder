@@ -20,7 +20,7 @@ export default {
                     iconUri: '../../assets/RandomSplit.svg',
                     toolTip: "Decision\nSplit Some tool tip text",
                     category: "Flow",
-                }{
+                },{
                     name: "Decision\nSplit",
                     iconUri: '../../assets/SecisionSplit.svg',
                     toolTip: "Decision\nSplit Some tool tip text",
