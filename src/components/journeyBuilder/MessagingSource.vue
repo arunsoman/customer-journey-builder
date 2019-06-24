@@ -1,15 +1,17 @@
 <template lang="html">
-<section class="entry-source">
-    <span>Entry Source</span>
-    <div id="EntrySourceID" draggable="true" style="height:calc(80%);width:calc(100%);"></div>
+<section class="messaging-source">
+    <span>Message Source</span>
+    <div id="MessagingSourceId" draggable="true" style="height:calc(80%);width:calc(100%);"></div>
 </section>
 </template>
 
-<script src="../../../node_modules/gojs/extensions/figures.js"></script><script lang="js">
+<script lang="js">
 export default {
-    name: 'entry-source',
-    props: ['diagram'],
+    name: 'messaging-source',
+    props: [],
+    mounted() {
 
+    },
     data() {
         return {
             colors: {
@@ -20,16 +22,22 @@ export default {
                 white: "#F5F5F5"
             },
             elements: [{
-                    name: "Contacts",
+                    name: "Email",
                     iconUri: '../../assets/AddContact.svg',
                     toolTip: "Some tool tip text",
-                    category: "sourcePalette",
+                    category: "MessagingPalette",
                 },
                 {
-                    name: "Events",
+                    name: "Sms",
                     iconUri: '../../assets/AddContact.svg',
                     toolTip: "Some tool tip text2",
-                    category: "sourcePalette"
+                    category: "MessagingPalette"
+                },
+                {
+                    name: "WhatsApp",
+                    iconUri: '../../assets/AddContact.svg',
+                    toolTip: "Some tool tip text2",
+                    category: "MessagingPalette"
                 },
             ]
         }
@@ -56,7 +64,7 @@ export default {
             var template =
                 $(go.Node, "Table", this.nodeStyle(),
                     $(go.Panel, go.Panel.Spot, // or "Spot"
-                        $(go.Shape, "Circle", {
+                        $(go.Shape, "Square", {
                             minSize: new go.Size(40, 40),
                             maxSize: new go.Size(40, 40),
                             fill: "green",
@@ -88,8 +96,8 @@ export default {
                         }
                     )
                 )
-            diagram.nodeTemplateMap.add("sourcePalette", template)
-            var p = $(go.Palette, "EntrySourceID")
+            diagram.nodeTemplateMap.add("MessagingPalette", template)
+            var p = $(go.Palette, "MessagingSourceId")
             p.model.nodeDataArray = this.elements
             p.nodeTemplate = template
         }
@@ -101,5 +109,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.entry-source {}
+.messaging-source {}
 </style>

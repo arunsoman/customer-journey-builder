@@ -1,41 +1,31 @@
 <template lang="html">
-<section class="entry-source">
-    <span>Entry Source</span>
-    <div id="EntrySourceID" draggable="true" style="height:calc(80%);width:calc(100%);"></div>
+<section class="customer-update">
+    <span>Customer update</span>
+    <div id="CustomerId" draggable="true" style="height:calc(80%);width:calc(100%);"></div>
 </section>
 </template>
 
-<script src="../../../node_modules/gojs/extensions/figures.js"></script><script lang="js">
+<script lang="js">
 export default {
-    name: 'entry-source',
-    props: ['diagram'],
+    name: 'customer-update',
+    props: [],
+    mounted() {
 
+    },
     data() {
         return {
-            colors: {
-                blue: "#00B5CB",
-                orange: "#F47321",
-                green: "#C8DA2B",
-                gray: "#888",
-                white: "#F5F5F5"
-            },
             elements: [{
-                    name: "Contacts",
+                    name: "Customer",
                     iconUri: '../../assets/AddContact.svg',
                     toolTip: "Some tool tip text",
-                    category: "sourcePalette",
+                    category: "customerPalette",
                 },
-                {
-                    name: "Events",
-                    iconUri: '../../assets/AddContact.svg',
-                    toolTip: "Some tool tip text2",
-                    category: "sourcePalette"
-                },
+
             ]
         }
+
     },
     methods: {
-
         addTemplates(diagram) {
             this.paletteTemplate(diagram)
         },
@@ -88,8 +78,8 @@ export default {
                         }
                     )
                 )
-            diagram.nodeTemplateMap.add("sourcePalette", template)
-            var p = $(go.Palette, "EntrySourceID")
+            diagram.nodeTemplateMap.add("customerPalette", template)
+            var p = $(go.Palette, "CustomerId")
             p.model.nodeDataArray = this.elements
             p.nodeTemplate = template
         }
@@ -101,5 +91,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.entry-source {}
+.customer-update {}
 </style>

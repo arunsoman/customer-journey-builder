@@ -1,41 +1,53 @@
 <template lang="html">
-<section class="entry-source">
-    <span>Entry Source</span>
-    <div id="EntrySourceID" draggable="true" style="height:calc(80%);width:calc(100%);"></div>
+<section class="flow-source">
+    <span>Flow</span>
+    <div id="FlowSourceID" draggable="true" style="height:calc(80%) ;width:calc(100%);"></div>
 </section>
 </template>
 
-<script src="../../../node_modules/gojs/extensions/figures.js"></script><script lang="js">
+<script lang="js">
 export default {
-    name: 'entry-source',
-    props: ['diagram'],
+    name: 'flow-source',
+    props: [],
+    mounted() {
 
+    },
     data() {
         return {
-            colors: {
-                blue: "#00B5CB",
-                orange: "#F47321",
-                green: "#C8DA2B",
-                gray: "#888",
-                white: "#F5F5F5"
-            },
             elements: [{
-                    name: "Contacts",
+                    name: "Decision\nSplit",
                     iconUri: '../../assets/AddContact.svg',
-                    toolTip: "Some tool tip text",
-                    category: "sourcePalette",
+                    toolTip: "Decision\nSplit Some tool tip text",
+                    category: "Flow",
                 },
                 {
-                    name: "Events",
+                    name: "EngagementSplit",
                     iconUri: '../../assets/AddContact.svg',
-                    toolTip: "Some tool tip text2",
-                    category: "sourcePalette"
+                    toolTip: "EngagementSplit Some tool tip text2",
+                    category: "Flow"
+                },
+                {
+                    name: "Join",
+                    iconUri: '../../assets/AddContact.svg',
+                    toolTip: "Join Some tool tip text2",
+                    category: "Flow"
+                },
+                {
+                    name: "Wait",
+                    iconUri: '../../assets/AddContact.svg',
+                    toolTip: "Wait Some tool tip text2",
+                    category: "Flow"
+                },
+                {
+                    name: "Wait Until",
+                    iconUri: '../../assets/AddContact.svg',
+                    toolTip: "Wait Until Some tool tip text2",
+                    category: "Flow"
                 },
             ]
         }
     },
     methods: {
-
         addTemplates(diagram) {
             this.paletteTemplate(diagram)
         },
@@ -56,10 +68,10 @@ export default {
             var template =
                 $(go.Node, "Table", this.nodeStyle(),
                     $(go.Panel, go.Panel.Spot, // or "Spot"
-                        $(go.Shape, "Circle", {
+                        $(go.Shape, "Diamond", {
                             minSize: new go.Size(40, 40),
                             maxSize: new go.Size(40, 40),
-                            fill: "green",
+                            fill: "#ed9206",
                             alignment: new go.Spot(0.5, 0.5)
                         }),
                         $(go.Picture, {
@@ -88,8 +100,8 @@ export default {
                         }
                     )
                 )
-            diagram.nodeTemplateMap.add("sourcePalette", template)
-            var p = $(go.Palette, "EntrySourceID")
+            diagram.nodeTemplateMap.add("Flow", template)
+            var p = $(go.Palette, "FlowSourceID")
             p.model.nodeDataArray = this.elements
             p.nodeTemplate = template
         }
@@ -101,5 +113,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.entry-source {}
+.flow-source {}
 </style>
