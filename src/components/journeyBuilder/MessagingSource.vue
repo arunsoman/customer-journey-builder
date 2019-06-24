@@ -23,19 +23,19 @@ export default {
             },
             elements: [{
                     name: "Email",
-                    iconUri: '../../assets/AddContact.svg',
+                    iconUri: '../../assets/SendEmail.svg',
                     toolTip: "Some tool tip text",
                     category: "MessagingPalette",
                 },
                 {
                     name: "Sms",
-                    iconUri: '../../assets/AddContact.svg',
+                    iconUri: '../../assets/SendSMS.svg',
                     toolTip: "Some tool tip text2",
                     category: "MessagingPalette"
                 },
                 {
                     name: "WhatsApp",
-                    iconUri: '../../assets/AddContact.svg',
+                    iconUri: '../../assets/SendSMS.svg',
                     toolTip: "Some tool tip text2",
                     category: "MessagingPalette"
                 },

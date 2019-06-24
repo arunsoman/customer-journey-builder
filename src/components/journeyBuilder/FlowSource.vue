@@ -14,33 +14,39 @@ export default {
     },
     data() {
         return {
-            elements: [{
+            elements: [
+              {
+                    name: "Random\nSplit",
+                    iconUri: '../../assets/RandomSplit.svg',
+                    toolTip: "Decision\nSplit Some tool tip text",
+                    category: "Flow",
+                }{
                     name: "Decision\nSplit",
-                    iconUri: '../../assets/AddContact.svg',
+                    iconUri: '../../assets/SecisionSplit.svg',
                     toolTip: "Decision\nSplit Some tool tip text",
                     category: "Flow",
                 },
                 {
                     name: "EngagementSplit",
-                    iconUri: '../../assets/AddContact.svg',
+                    iconUri: '../../assets/EngagementSplit.svg',
                     toolTip: "EngagementSplit Some tool tip text2",
                     category: "Flow"
                 },
                 {
                     name: "Join",
-                    iconUri: '../../assets/AddContact.svg',
+                    iconUri: '../../assets/Join.svg',
                     toolTip: "Join Some tool tip text2",
                     category: "Flow"
                 },
                 {
                     name: "Wait",
-                    iconUri: '../../assets/AddContact.svg',
+                    iconUri: '../../assets/Wait.svg',
                     toolTip: "Wait Some tool tip text2",
                     category: "Flow"
                 },
                 {
                     name: "Wait Until",
-                    iconUri: '../../assets/AddContact.svg',
+                    iconUri: '../../assets/WaitUntil.svg',
                     toolTip: "Wait Until Some tool tip text2",
                     category: "Flow"
                 },
