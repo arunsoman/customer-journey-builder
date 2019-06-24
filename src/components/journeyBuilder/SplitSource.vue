@@ -1,13 +1,13 @@
 <template lang="html">
 <section class="flow-source">
-    <span>Flow</span>
-    <div id="FlowSourceID" draggable="true" style="height:calc(80%) ;width:calc(100%);"></div>
+    <span>Splits</span>
+    <div id="SplitSourceId" draggable="true" style="height:calc(80%) ;width:calc(100%);"></div>
 </section>
 </template>
 
 <script lang="js">
 export default {
-    name: 'flow-source',
+    name: 'split-source',
     props: [],
     mounted() {
 
@@ -15,24 +15,23 @@ export default {
     data() {
         return {
             elements: [
-                {
-                    name: "Join",
-                    iconUri: '../../assets/Join.svg',
-                    toolTip: "Join Some tool tip text2",
-                    category: "Flow"
+              {
+                    name: "Random",
+                    iconUri: '../../assets/RandomSplit.svg',
+                    toolTip: "Decision Some tool tip text",
+                    category: "Split",
+                },{
+                    name: "Decision",
+                    iconUri: '../../assets/SecisionSplit.svg',
+                    toolTip: "Decision Some tool tip text",
+                    category: "Split",
                 },
                 {
-                    name: "Wait",
-                    iconUri: '../../assets/Wait.svg',
-                    toolTip: "Wait Some tool tip text2",
-                    category: "Flow"
-                },
-                {
-                    name: "Wait Until",
-                    iconUri: '../../assets/WaitUntil.svg',
-                    toolTip: "Wait Until Some tool tip text2",
-                    category: "Flow"
-                },
+                    name: "Engagement",
+                    iconUri: '../../assets/EngagementSplit.svg',
+                    toolTip: "EngagementSplit Some tool tip text2",
+                    category: "Split"
+                }
             ]
         }
     },
@@ -89,8 +88,8 @@ export default {
                         }
                     )
                 )
-            diagram.nodeTemplateMap.add("Flow", template)
-            var p = $(go.Palette, "FlowSourceID")
+            diagram.nodeTemplateMap.add("Split", template)
+            var p = $(go.Palette, "SplitSourceId")
             p.model.nodeDataArray = this.elements
             p.nodeTemplate = template
         }
@@ -100,7 +99,3 @@ export default {
     }
 }
 </script>
-
-<style lang="scss" scoped>
-.flow-source {}
-</style>

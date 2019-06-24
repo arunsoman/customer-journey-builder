@@ -3,10 +3,11 @@
     <v-layout align-center justify-start row fill-height>
         <v-flex sm2>
             <v-layout align-center justify-start column fill-height>
-                <EntrySource ref="entrySource" :diagram="diagram" style="height:200px;width:calc(100%); border: 1px solid gray;" />
-                <FlowSource ref="flowSource" :diagram="diagram" style="height:200px;width:calc(100%); border: 1px solid gray;" />
-                <MessagingSource ref="messageSource" :diagram="diagram" style="height:200px;width:calc(100%); border: 1px solid gray;" />
-                <CustomerUpdate ref="customerSource" :diagram="diagram" style="height:200px;width:calc(100%); border: 1px solid gray;" />
+                <EntrySource ref="entrySource" :diagram="diagram" style="height:150px;width:calc(100%); border: 1px solid gray;" />
+                <FlowSource ref="flowSource" :diagram="diagram" style="height:150px;width:calc(100%); border: 1px solid gray;" />
+                <SplitSource ref="splitSource" :diagram="diagram" style="height:150px;width:calc(100%); border: 1px solid gray;" />
+                <MessagingSource ref="messageSource" :diagram="diagram" style="height:150px;width:calc(100%); border: 1px solid gray;" />
+                <CustomerUpdate ref="customerSource" :diagram="diagram" style="height:150px;width:calc(100%); border: 1px solid gray;" />
 
             </v-layout>
         </v-flex>
@@ -44,6 +45,7 @@
 import go from '../../../node_modules/gojs/release/go.js'
 import EntrySource from './EntrySource'
 import FlowSource from './FlowSource'
+import SplitSource from './SplitSource'
 import CustomerUpdate from './CustomerUpdate'
 import MessagingSource from './MessagingSource'
 import customIcons from "./icon.js"
@@ -65,6 +67,7 @@ export default {
         EntrySource,
         FlowSource,
         MessagingSource,
+        SplitSource,
         CustomerUpdate
     },
     mounted() {
@@ -87,6 +90,7 @@ export default {
         this.$refs['entrySource'].addTemplates(this.diagram)
         this.$refs['flowSource'].addTemplates(this.diagram)
         this.$refs['customerSource'].addTemplates(this.diagram)
+        this.$refs['splitSource'].addTemplates(this.diagram)
         this.$refs['messageSource'].addTemplates(this.diagram)
         this.linkTemplate(this.diagram)
 
