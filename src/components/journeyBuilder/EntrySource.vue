@@ -24,12 +24,14 @@ export default {
                     iconUri: '../../assets/AddContact.svg',
                     toolTip: "Some tool tip text",
                     category: "sourcePalette",
+                    toggleCategory: 'ContactsExpanded'
                 },
                 {
                     name: "Events",
                     iconUri: '../../assets/AddContact.svg',
                     toolTip: "Some tool tip text2",
-                    category: "sourcePalette"
+                    category: "sourcePalette",
+                    toggleCategory: 'ContactsExpanded'
                 },
             ]
         }
@@ -37,6 +39,7 @@ export default {
     methods: {
 
         addTemplates(diagram) {
+        this.expandedTemplate(diagram)
             this.paletteTemplate(diagram)
         },
 
@@ -93,6 +96,55 @@ export default {
             var p = $(go.Palette, "EntrySourceID")
             p.model.nodeDataArray = this.elements
             p.nodeTemplate = template
+        },
+        expandedTemplate(diagram) {
+          var contextMenu = this.$parent.addContextMenu()
+            var makePort = this.$parent.makePort
+            var go = this.go
+            var colors = this.colors
+            var $ = go.GraphObject.make;
+            var template =
+                $(go.Node, "Table", this.nodeStyle(),
+                    $(go.Panel, go.Panel.Spot, // or "Spot"
+                        $(go.Shape, "Rectangle", {
+                            minSize: new go.Size(80, 80),
+                            maxSize: new go.Size(20, 20),
+                            fill: "green",
+                            alignment: new go.Spot(0.5, 0.5)
+                        }),
+                        $(go.Shape, "Circle", {
+                            minSize: new go.Size(10, 10),
+                            maxSize: new go.Size(20, 20),
+                            fill: "green",
+                            alignment: new go.Spot(0.5, 0.5)
+                        }),
+                        $(go.Picture, {
+                            alignment: new go.Spot(0.5, 0.5),
+                            desiredSize: new go.Size(60, 60),
+                        }, new go.Binding("source", "iconUri")),
+                        $(go.TextBlock, {
+                                alignment: new go.Spot(0.5, 1),
+                                margin: 8,
+                                stroke: "gray",
+                                font: "bold 12px sans-serif"
+                            },
+                            new go.Binding("text", "name")),
+                        makePort("L", go.Spot.Left, go.Spot.Left, true, false),
+                        makePort("R", go.Spot.Right, go.Spot.Right, true, false), {
+                            toolTip: $("ToolTip", {
+                                    "Border.stroke": "gray",
+                                    "Border.strokeWidth": 2
+                                },
+                                $(go.TextBlock, {
+                                        margin: 8,
+                                        stroke: "gray",
+                                        font: "bold 16px sans-serif"
+                                    },
+                                    new go.Binding("text", "toolTip")))
+                        }
+                    ),contextMenu
+                )
+            diagram.nodeTemplateMap.add("ContactsExpanded", template)
         }
     },
     computed: {

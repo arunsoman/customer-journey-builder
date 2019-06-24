@@ -89,17 +89,29 @@ export default {
         this.$refs['customerSource'].addTemplates(this.diagram)
         this.$refs['messageSource'].addTemplates(this.diagram)
         this.linkTemplate(this.diagram)
+
+        var dia = this.diagram
+
         this.diagram.addDiagramListener("Modified", function (e) {
             console.log("activate save")
         });
         this.diagram.addDiagramListener("ObjectSingleClicked",
             function (e) {
-                var part = e.subject.part;
-                if (!(part instanceof go.Link)) {
+                var node = e.subject.part;
+                if (!(node instanceof go.Link)) {
                     //  debugger
+                    if (node) {
+                        var t = node.data.toggleCategory
+                        if (!t) return
+                        var diagram = node.diagram;
+                        diagram.startTransaction("changeCategory");
+                        var cat = diagram.model.getCategoryForNodeData(node.data);
+                        node.data.toggleCategory = cat
+                        diagram.model.setCategoryForNodeData(node.data, t);
+                        diagram.commitTransaction("changeCategory");
+                    }
                 }
             });
-        var dia = this.diagram
         dia.addDiagramListener("ExternalObjectsDropped",
             function (e) {
                 var part = e.subject.part;
@@ -150,10 +162,10 @@ export default {
                     }
                 })
             })
-            if(this.config){
-              this.diagram.model = go.Model.fromJson(this.config)
-              debugger
-            }
+        if (this.config) {
+            this.diagram.model = go.Model.fromJson(this.config)
+            debugger
+        }
     },
     data() {
         return {
