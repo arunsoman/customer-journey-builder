@@ -71,7 +71,7 @@ export default {
                             desiredSize: new go.Size(60, 60),
                         }, new go.Binding("source", "iconUri")),
                         $(go.TextBlock, {
-                                alignment: new go.Spot(0.5, 1),
+                                alignment: new go.Spot(0.5, 1, 0, 10),
                                 margin: 8,
                                 stroke: "gray",
                                 font: "bold 12px sans-serif"

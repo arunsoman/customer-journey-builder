@@ -16,17 +16,20 @@
     </v-toolbar>
 
     <v-content>
-      <JourneyBuilderDashboard/>
+      <!-- <JourneyBuilderDashboard/> -->
+      <ConversationBuilder/>
     </v-content>
   </v-app>
 </template>
 
 <script>
 import JourneyBuilderDashboard from './components/journeyBuilder/JourneyBuilderDashboard' 
+import ConversationBuilder from './components/conversationbuilder/ConversationBuilder'
 export default {
   name: 'App',
   components: {
-    JourneyBuilderDashboard
+    JourneyBuilderDashboard,
+    ConversationBuilder
   },
   data () {
     return {

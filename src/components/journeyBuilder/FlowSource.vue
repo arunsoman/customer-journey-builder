@@ -17,19 +17,24 @@ export default {
             elements: [
                 {
                     name: "Join",
-                    iconUri: '../../assets/Join.svg',
+                    iconUri: 'http://placeskull.com/60/60',
                     toolTip: "Join Some tool tip text2",
                     category: "Flow"
+                    
                 },
                 {
                     name: "Wait",
-                    iconUri: '../../assets/Wait.svg',
+                    iconUri: '@./assets/Wait.svg',
                     toolTip: "Wait Some tool tip text2",
-                    category: "Flow"
+                    category: "Flow",
+                    value: {
+                      duration: 2,
+                      unit: "weeks"
+                    }
                 },
                 {
                     name: "Wait Until",
-                    iconUri: '../../assets/WaitUntil.svg',
+                    iconUri: '@/assets/WaitUntil.svg',
                     toolTip: "Wait Until Some tool tip text2",
                     category: "Flow"
                 },
@@ -65,10 +70,10 @@ export default {
                         }),
                         $(go.Picture, {
                             alignment: new go.Spot(0.5, 0.5),
-                            desiredSize: new go.Size(60, 60),
+                            desiredSize: new go.Size(30, 30),
                         }, new go.Binding("source", "iconUri")),
                         $(go.TextBlock, {
-                                alignment: new go.Spot(0.5, 1),
+                                alignment: new go.Spot(0.5, 1, 0, 10),
                                 margin: 8,
                                 stroke: "gray",
                                 font: "bold 12px sans-serif"
