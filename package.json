@@ -10,6 +10,8 @@
   "dependencies": {
     "core-js": "^2.6.5",
     "gojs": "^2.0.12",
+    "jquery": "^3.4.1",
+    "jquery-ui": "^1.12.1",
     "vue": "^2.6.10",
     "vuetify": "^1.5.5",
     "vuex": "^3.0.1"

@@ -1,66 +1,61 @@
 <template lang="html">
-<section class="conversation-unit">
-    <v-container>
-       <v-card>
-        <v-layout row wrap>
-         
-            <v-flex xs12>
-                <v-text-field v-model="prompt" label="Prompt"></v-text-field>
-            </v-flex>
-            <v-flex xs12>
-                <v-text-field v-model="reprompt" label="Reprompt"></v-text-field>
-            </v-flex>
-            <v-flex xs12 sm6>
-                <v-text-field v-model="options" label="Options , seperated"></v-text-field>
-            </v-flex>
-            <v-flex xs12 sm6>
-                <v-text-field v-model="validation" label="validation regex"></v-text-field>
-            </v-flex>
-            <v-flex xs12 sm4>
-                <p>Expected return type</p>
-                <v-overflow-btn :items="dataType" label="Overflow Btn" v-model='selectedDataType'></v-overflow-btn>
-            </v-flex>
-        </v-layout>
-        <v-btn save @click="$emit('saved')">save</v-btn>
-        </v-card>
-    </v-container>
-</section>
+<v-dialog v-model="dialog">
+    <section class="conversation-unit">
+        <v-container>
+            <v-card>
+                <v-card-text>
+                    <WelcomeUnit ref="welcomeUnitRef" v-show="displayType === 'welcome'"></WelcomeUnit>
+                </v-card-text>
+                <v-card-actions>
+                    <v-btn save @click="save">Update</v-btn>
+                    <v-btn cancel @click="dialog = false">cancel</v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-container>
+    </section>
+</v-dialog>
 </template>
 
 <script lang="js">
+import WelcomeUnit from "./view/WelcomeUnit";
+import go from '../../../node_modules/gojs/release/go-debug'
+import CanvasDataModel from "./js/CanvasDataModel";
+
 export default {
     name: 'conversation-unit',
-    props: ['config'],
+    components: {
+        WelcomeUnit
+    },
     mounted() {
-        if (this.config) {
-            this.prompt = this.config.prompt
-            this.reprompt = this.config.reprompt
-            this.options = this.config.options
-            this.validation = this.config.validation
-        }
-
+        const h = this;
+        this.canvasDataModel = new CanvasDataModel(this)
+       
     },
     data() {
         return {
-            prompt: '',
-            reprompt: '',
-            options: '',
-            validation: '',
-            selectedDataType: '',
-            dataType: ["location", "state", "city", "country", "age", "gender", "Add more"]
+           
+            dialog: false,
+            selectedComponent: {},
+            canvasDataModel: {},
+            displayType: '',
         }
     },
     methods: {
-      getDataObj(){
-        debugger
-        return {
-          prompt: this.prompt,
-            reprompt: this.reprompt,
-            options: this.options,
-            validation: this.validation,
-            selectedDataType: this.selectedDataType
+        populateData(vueData){
+            console.log("implement this")
+            this.displayType = vueData.category
+            if(this.displayType = 'welcome'){
+                this.selectedComponent = this.$refs.welcomeUnitRef
+                this.$refs.welcomeUnitRef.update(vueData)
+            }
+            this.dialog = true
+        },
+        save(){
+            const result = this.selectedComponent.getModifiedData()
+            console.log(result)
+            this.canvasDataModel.updateModel(result)
+            this.dialog = false
         }
-      }
     },
     computed: {
 
