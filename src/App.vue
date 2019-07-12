@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import JourneyBuilderDashboard from './components/journeyBuilder/JourneyBuilderDashboard' 
+import JourneyBuilderDashboard from './components/journeyBuilder/JourneyBuilderDashboard'
 import ConversationBuilder from './components/conversationbuilder/ConversationBuilder'
 export default {
   name: 'App',

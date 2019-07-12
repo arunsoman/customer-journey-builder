@@ -23,56 +23,52 @@
 
     </v-layout>
 
-    <ConversationUnit v-if="diagram" />
+    <ConversationUnit ref='conversationUnitRef' />
 
 </div>
 </template>
 
 <script>
-import TemplateModel from './js/TemplateModel';
-import GoJSHelper from './js/GoJSHelper';
-import ConversationUnit from './ConversationUnit';
-import {
-    debuglog
-} from 'util';
+
+import GoJSHelper from './gojs/GoJSHelper'
+import ConversationUnit from './ConversationUnit'
 
 export default {
-    name: 'conversation-builder',
-    props: ['config'],
-    components: {
-        ConversationUnit
-    },
-    mounted() {
-        this.diagram = new GoJSHelper("goDiaDiv")
-        var tm = new TemplateModel(this.diagram, "paletteDiv")
-    },
-    data() {
-        return {
-            diagram: undefined,
-            name: "",
-        }
-    },
-    methods: {
-
-        reload() {
-            this.diagram.model = go.Model.fromJson(document.getElementById("mySavedModel").value);
-        },
-        save() {
-            var jStr = this.diagram.model.toJson()
-            debugger
-        },
-        discard() {
-            debugger
-            console.log("go back to list, needs to be implemented")
-        },
-
-    },
-    watch: {
-        config: (v) => {
-            this.name = v.name
-            this.diagram.model.fromJson(v.json)
-        }
+  name: 'conversation-builder',
+  props: ['config'],
+  components: {
+    ConversationUnit
+  },
+  mounted () {
+    const cuRef = this.$refs.conversationUnitRef
+    this.meta = new GoJSHelper('goDiaDiv', 'paletteDiv', (a, b) => {
+      cuRef.dialog = true
+      cuRef.displayType = a
+      cuRef.setData(b, this.meta)
+    })
+  },
+  data () {
+    return {
+      meta: undefined,
+      name: ''
     }
+  },
+  methods: {
+    elementClicked (ele) {},
+    reload () {
+      this.meta.diagram.model = go.Model.fromJson(document.getElementById('mySavedModel').value)
+    },
+    save () {
+      var jStr = this.meta.diagram.model.toJson()
+      debugger
+    },
+    discard () {
+      debugger
+      console.log('go back to list, needs to be implemented')
+    }
+
+  }
+
 }
 </script>
 
