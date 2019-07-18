@@ -4,11 +4,11 @@
         <v-container>
             <v-card>
                 <v-card-text>
-                    <WelcomeV ref='Welcome' :pData="node.data" v-if="displayType === 'Welcome'"></WelcomeV>
-                    <DecisionV ref='DecisionIntent' :pData="node.data" v-if="displayType === 'DecisionIntent'"></DecisionV>
-                    <RecommenderV ref='Recommender' :pData="node.data" v-if="displayType === 'Recommender'"></RecommenderV>
-                    <QuestionV ref='Question' :pData="node.data" v-if="displayType === 'Question'"></QuestionV>
-                    <CapabilitiesV ref='Capabilities' :pData="node.data" v-if="displayType === 'Capabilities'"></CapabilitiesV>
+                    <WelcomeV ref='Welcome' :pData="node" v-if="displayType === 'Welcome'"></WelcomeV>
+                    <DecisionV ref='DecisionIntent' :pData="node" v-if="displayType === 'DecisionIntent'"></DecisionV>
+                    <RecommenderV ref='Recommender' :pData="node" v-if="displayType === 'Recommender'"></RecommenderV>
+                    <QuestionV ref='Question' :pData="node" v-if="displayType === 'Question'"></QuestionV>
+                    <CapabilitiesV ref='Capabilities' :pData="node" v-if="displayType === 'Capabilities'"></CapabilitiesV>
                 </v-card-text>
                 <v-card-actions>
                     <v-btn save @click="save">Update</v-btn>
@@ -50,6 +50,16 @@ export default {
     }
   },
   methods: {
+    handleDoubleClick (ele) {
+      console.log("In vue")
+      this.node= ele
+      this.displayType = "Welcome"
+      debugger
+      this.$emit('showDialog',true)
+    },
+    showDialog(){
+      this.dialog = true
+    },
     clearAll () {
       this.dialog = false
       this.displayType = undefined

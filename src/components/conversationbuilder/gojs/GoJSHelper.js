@@ -1,103 +1,99 @@
 import go from '../../../../node_modules/gojs/release/go-debug'
+import iconMap from "./iconLoader"
 
-import wt from './Welcome'
-import dI from './DecisionIntent'
-import qI from './Question'
-import rec from './Recommender'
-import cap from './Capabilities'
+import Welcome from './Welcome'
+import DecisionIntent from './DecisionIntent'
+import Question from './Question'
+import Recommender from './Recommender'
+import Capabilities from './Capabilities'
 const $ = go.GraphObject.make
-export default function goJsInit (canvasId, paletteId, selectedEleCallback) {
-  const modelViewMap = {}
-  const intents = [
-    // add all intents, as and when created
-    new wt(),
-    new dI(),
-    new rec(),
-    new qI(),
-    new cap()
-  ]
-  var diagram = $(go.Diagram, canvasId, // create a Diagram for the DIV HTML element
-    { // enable undo & redo
-      'undoManager.isEnabled': true,
-      maxSelectionCount: 1,
-      layout: $(go.TreeLayout, {
-        angle: 90,
-        arrangement: go.TreeLayout.ArrangementFixedRoots,
-        nodeSpacing: 4
-      }),
-      initialContentAlignment: go.Spot.Top
-    })
-  diagram.addDiagramListener('Modified', function (e) {
-    console.log('activate save')
+
+const templates = [
+  new Welcome(),
+  new DecisionIntent(),
+  new Question(),
+  new Capabilities(),
+  new Recommender(),
+]
+
+export default function goJsInit(vueContext) {
+
+  var font = 'bold 12px sans-serif'
+
+  var diagram = $(go.Diagram, "goDiaDiv", {
+    'undoManager.isEnabled': true,
+    maxSelectionCount: 1,
+    layout: $(go.TreeLayout, {
+      angle: 90,
+      arrangement: go.TreeLayout.ArrangementFixedRoots,
+      nodeSpacing: 4
+    }),
+    initialContentAlignment: go.Spot.Top
   })
 
-  diagram.addDiagramListener('ObjectSingleClicked',
-    (e) => {
-      var node = e.subject.part
-      if (!(node instanceof go.Node)) return
-      debugger
-      selectedEleCallback(node.data.intentName, node)
-    })
-
-  diagram.addDiagramListener('ExternalObjectsDropped',
-    function (e) {
-      var node = e.subject.part
-      if (!(node instanceof go.Node)) return
-    })
-
-  const myPalette = $(go.Palette, paletteId)
-  myPalette.model = new go.GraphLinksModel()
-  const tt = myPalette.nodeTemplateMap
-  intents.forEach(e => {
-    const x = e.paletteTemplate()
-    tt.add(x[0], x[1])
-    const y = e.canvasTemplate()
-    diagram.nodeTemplateMap.add(y[0], y[1])
+  diagram.model = $(go.GraphLinksModel, {
+    linkFromPortIdProperty: "fromPort",  // required information:
+    linkToPortIdProperty: "toPort",
   })
-  myPalette.model.nodeDataArray = intents.map(e => {
-    return e.dataModel
-  })
-  diagram.linkTemplate =
-        $(go.Link, // the whole link panel
-          {
-            routing: go.Link.AvoidsNodes,
-            curve: go.Link.JumpOver,
-            corner: 5,
-            toShortLength: 4,
-            relinkableFrom: true,
-            relinkableTo: true,
-            reshapable: true,
-            resegmentable: true,
-            // mouse-overs subtly highlight links:
-            mouseEnter: function (e, link) { link.findObject('HIGHLIGHT').stroke = 'rgba(30,144,255,0.2)' },
-            mouseLeave: function (e, link) { link.findObject('HIGHLIGHT').stroke = 'transparent' },
-            selectionAdorned: false
+
+  // create the Palette
+  var myPalette = $(go.Palette, "paletteDiv");
+
+  // the Palette's node template is different from the main Diagram's
+  myPalette.nodeTemplate =
+    $(go.Node, "Auto",
+      $(go.Shape, "Rectangle",
+        {
+          name: "SHAPE", fill: "white", stroke: "white", minSize: new go.Size(80, 50),
+          maxSize: new go.Size(80, 80), toolTip: null,
+        }),
+      $(go.Panel, "Vertical",
+        $(go.Panel, "Spot",
+          $(go.Shape,
+            { width: 40, height: 40, fill: "white", alignment: new go.Spot(0.0, 0.0) },
+            new go.Binding("fill", "color"),
+            new go.Binding("figure", "figure")),
+          $(go.Picture,
+            {
+              desiredSize: new go.Size(40, 40),
+              alignment: new go.Spot(0., 0.)
+            },
+            new go.Binding("source", "icon", (k) => {
+              var s = iconMap[k]
+              if (!s)
+                console.log("Error: No icon foud for " + k)
+              return s
+            })),
+        ),
+        $(go.TextBlock,
+          new go.Binding("text", "name")),
+        {
+          toolTip: $('ToolTip', {
+            'Border.stroke': 'gray',
+            'Border.strokeWidth': 2
           },
-          new go.Binding('points').makeTwoWay(),
-          $(go.Shape, // the highlight shape, normally transparent
-            { isPanelMain: true, strokeWidth: 12, stroke: 'transparent', name: 'HIGHLIGHT' }),
-          $(go.Shape, // the link path shape
-            { isPanelMain: true, stroke: 'gray', strokeWidth: 2 },
-            new go.Binding('stroke', 'isSelected', function (sel) { return sel ? 'dodgerblue' : 'gray' }).ofObject()),
-          $(go.Shape, // the arrowhead
-            { toArrow: 'standard', strokeWidth: 0, fill: 'gray' })
+            $(go.TextBlock, {
+              margin: 8,
+              stroke: "gray",
+              font: font,
 
-        )
+            }, new go.Binding("text", "tooltip"))
+          )
+        }
+      )
 
-  const d = {
-    diagram: diagram,
-    eMap: (name, element) => {
-      modelViewMap.put(name, element)
-    },
-    save: (node, modifiedData) => {
-      debugger
-      var model = diagram.model
-      model.startTransaction('Update props')
-      for (var x in modifiedData) { model.set(node.data, x, modifiedData[x]) }
-      model.commitTransaction('Update props')
-      console.log(' saved property')
-    }
+    )
+
+  diagram.nodeTemplate = myPalette.nodeTemplate
+  
+  templates.forEach(e => {
+    e.addTemplate(diagram.nodeTemplateMap)
+    e.vueContext =vueContext
+  })
+  myPalette.model.nodeDataArray = templates.map(e => e.model)
+
+
+  return {
+    diagram: diagram
   }
-
-  return d
 }

@@ -29,26 +29,14 @@ class Capabilities extends AbsractTemplate {
         ]
     }
 
-    canvasTemplate() {
+    addTemplate(map) {
         const toolTip = this.toolTip(this.model.help, 'Gray')
-        var horizontal = true
-        const name = this.model.name
-        return [
-            name,
-
-            $(go.Node, 'Vertical',
-                { background: '#44CCFF', },
+        const template =
+            $(go.Node, 'Vertical', { background: this.bg },
+                this.createPort("", this.top),
                 $(go.Panel, 'Horizontal',
-                    $(go.Shape, 'Diamond',
-                        {
-                            minSize: new go.Size(40, 40),
-                            maxSize: new go.Size(40, 40),
-                            alignment: new go.Spot(0.5, 0.5),
-                            fill: "lightgreen", stroke: null,
-                            // set the port properties:
-                            portId: "capabilitiesInPort", fromLinkable: false, toLinkable: true, cursor: "pointer"
-                        }),
-                    this.overflowLabel("prompt", 'gray', 3, 180)
+                    this.base(),
+                    this.overflowLabel('prompt', 'gray', 3, 180), { toolTip: toolTip }
                 ),
                 $(go.Panel, 'Horizontal',
                     new go.Binding('itemArray', 'capabiltiesArray'),
@@ -58,8 +46,7 @@ class Capabilities extends AbsractTemplate {
                         itemTemplate:
                             $(go.Panel,
                                 {
-                                    _side: 'bottom', // internal property to make it easier to tell which side it's on
-                                    // fromSpot: go.Spot.Left,
+                                    _side: 'bottom',
                                     toSpot: go.Spot.Bottom,
                                     fromLinkable: true,
                                     toLinkable: false,
@@ -89,7 +76,7 @@ class Capabilities extends AbsractTemplate {
                 )
             )
 
-        ]
+        map.add(this.model.category, template)
     }
 }
 export default Capabilities

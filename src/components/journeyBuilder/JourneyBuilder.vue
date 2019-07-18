@@ -3,12 +3,12 @@
     <v-layout align-center justify-start row fill-height>
         <v-flex sm2>
             <v-layout align-center justify-start column fill-height>
-                <EntrySource ref="entrySource" :diagram="diagram" style="height:150px;width:calc(100%); border: 1px solid gray;" />
-                <FlowSource ref="flowSource" :diagram="diagram" style="height:150px;width:calc(100%); border: 1px solid gray;" />
-                <SplitSource ref="splitSource" :diagram="diagram" style="height:150px;width:calc(100%); border: 1px solid gray;" />
-                <MessagingSource ref="messageSource" :diagram="diagram" style="height:150px;width:calc(100%); border: 1px solid gray;" />
-                <CustomerUpdate ref="customerSource" :diagram="diagram" style="height:150px;width:calc(100%); border: 1px solid gray;" />
-
+                <div v-for="(id, i)  in categories">
+                    <v-flex sm12>
+                        <span>{{id}}</span>
+                        <div :id="id" style="height:150px;width:140px; border: 1px solid gray;" />
+                    </v-flex>
+                </div>
             </v-layout>
         </v-flex>
 
@@ -40,139 +40,24 @@
 </div>
 </template>
 
-<script src=".../../../node_modules/gojs/extensions/figures.js"></script>
-<script src="./Messaging.js"></script><script lang="js">
+<script lang="js">
 import go from '../../../node_modules/gojs/release/go.js'
-import EntrySource from './EntrySource'
-import FlowSource from './FlowSource'
-import SplitSource from './SplitSource'
-import CustomerUpdate from './CustomerUpdate'
-import MessagingSource from './MessagingSource'
-import customIcons from "./icon.js"
-var $ = go.GraphObject.make;
-var _TBlock = go.TextBlock;
-var _SpotLeft = go.Spot.Left;
-var _SpotTop = go.Spot.Top;
-var _SpotRight = go.Spot.Right;
-var _SpotBottom = go.Spot.Bottom;
-var _Node = go.Node;
-var diagram = {};
-var lastAdded = undefined
-var utils = document.utils
+import goJsHelper from './gojs/GoJSHelper'
 
 export default {
     name: 'journey-builder',
     props: ['config'],
     components: {
-        EntrySource,
-        FlowSource,
-        MessagingSource,
-        SplitSource,
-        CustomerUpdate
+
     },
     mounted() {
-        console.log(this.go)
-        console.log(document.source)
-        var go = this.go
-        var $ = go.GraphObject.make;
-        this.diagram = $(go.Diagram, "goDiaDiv", // create a Diagram for the DIV HTML element
-            { // enable undo & redo
-                "undoManager.isEnabled": true,
-                maxSelectionCount: 1,
-                "LinkDrawn": this.showLinkLabel, // this DiagramEvent listener is defined below
-                "LinkRelinked": this.showLinkLabel,
-                layout: $(go.TreeLayout, {
-                    angle: (true ? 0 : 90),
-                    nodeSpacing: 4
-                }),
-                initialContentAlignment: go.Spot.Left
-            });
-        this.$refs['entrySource'].addTemplates(this.diagram)
-        this.$refs['flowSource'].addTemplates(this.diagram)
-        this.$refs['customerSource'].addTemplates(this.diagram)
-        this.$refs['splitSource'].addTemplates(this.diagram)
-        this.$refs['messageSource'].addTemplates(this.diagram)
-        this.linkTemplate(this.diagram)
+        const helper = goJsHelper("goDiaDiv", this.categories, (a, b) => {
 
-        var dia = this.diagram
-
-        this.diagram.addDiagramListener("Modified", function (e) {
-            console.log("activate save")
-        });
-        this.diagram.addDiagramListener("ObjectSingleClicked",
-            function (e) {
-                var node = e.subject.part;
-                if (!(node instanceof go.Link)) {
-                    //  debugger
-                    if (node) {
-                        var t = node.data.toggleCategory
-                        if (!t) return
-                        var diagram = node.diagram;
-                        diagram.startTransaction("changeCategory");
-                        var cat = diagram.model.getCategoryForNodeData(node.data);
-                        node.data.toggleCategory = cat
-                        diagram.model.setCategoryForNodeData(node.data, t);
-                        diagram.commitTransaction("changeCategory");
-                    }
-                }
-            });
-        dia.addDiagramListener("ExternalObjectsDropped",
-            function (e) {
-                var part = e.subject.part;
-                const groupBy = key => array =>
-                    array.reduce((objectsByKeyValue, obj) => {
-                        const value = obj[key];
-                        objectsByKeyValue[value] = (objectsByKeyValue[value] || []).concat(obj);
-                        return objectsByKeyValue;
-                    }, {});
-                const groupByCategory = groupBy('category');
-                const findBestFoster = (fosters) => {
-                    const group = groupByCategory(fosters)
-                    //TODO add sofistication later, now return the nearest one
-                    var temp = []
-                    for (var property in group) {
-                        if (group.hasOwnProperty(property)) {
-                            temp.push(group[property].sort((a, b) => a.distance - b.distance)[0])
-                        }
-                    }
-                    const minDist = Math.min(...temp.map(e => e.distance))
-                    return temp.find(e => e.distance == minDist)
-                }
-                var child = dia.findNodeForKey(e.subject.first().key)
-                const childLoc = child.location
-                e.subject.each((node) => {
-                    if (node.data) {
-                        const fosters = dia.model.nodeDataArray.filter(e => {
-                                return e.key != node.data.key && node.data.loc
-                            })
-                            .map(aNode => {
-                                const nodeLoc = go.Point.parse(aNode.loc)
-                                return {
-                                    key: aNode.key,
-                                    category: aNode.category,
-                                    distance: childLoc.distanceSquaredPoint(nodeLoc),
-                                    direction: childLoc.directionPoint(nodeLoc)
-                                }
-                            })
-                        if (fosters.length > 0) {
-                            const best = findBestFoster(fosters)
-                            dia.startTransaction("make new link");
-                            dia.model.addLinkData({
-                                from: best.key,
-                                to: child.data.key
-                            });
-                            dia.commitTransaction("make new link");
-                        }
-                    }
-                })
-            })
-        if (this.config) {
-            this.diagram.model = go.Model.fromJson(this.config)
-            debugger
-        }
+        })
     },
     data() {
         return {
+            categories: ["entryID", "splitID", "messagingID", "joinID", "customerID", ],
             diagram: {},
             creativeConfig: {},
             mutated: false,

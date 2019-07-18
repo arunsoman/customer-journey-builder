@@ -23,7 +23,7 @@
 
     </v-layout>
 
-    <ConversationUnit ref='conversationUnitRef' />
+    <ConversationUnit @showDialog= "showDialog" ref='conversationUnitRef' />
 
 </div>
 </template>
@@ -41,11 +41,8 @@ export default {
   },
   mounted () {
     const cuRef = this.$refs.conversationUnitRef
-    this.meta = new GoJSHelper('goDiaDiv', 'paletteDiv', (a, b) => {
-      cuRef.dialog = true
-      cuRef.displayType = a
-      cuRef.setData(b, this.meta)
-    })
+    this.meta = new GoJSHelper(cuRef)
+
   },
   data () {
     return {
@@ -54,7 +51,9 @@ export default {
     }
   },
   methods: {
-    elementClicked (ele) {},
+    showDialog(){
+      this.$refs.conversationUnitRef.showDialog()
+    },
     reload () {
       this.meta.diagram.model = go.Model.fromJson(document.getElementById('mySavedModel').value)
     },

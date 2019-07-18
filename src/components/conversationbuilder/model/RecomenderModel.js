@@ -1,22 +1,18 @@
 import BaseModel from './BaseModel'
-const uuidv4 = require('uuid/v4')
 
 class RecomenderModel extends BaseModel {
   constructor () {
     super('Recommeder')
     this.displayType = 'chip'
+    this.tooltip= "Recommend"
+    this.category= "Recommend"
+    this.name= "Recommend"
+    this.icon= "SendEmail"
+    this.figure= "RoundedRectangle"
+    this.color= "lightskyblue"
+    this.prompt = "These are my recommendations"
   }
 
-  get category () {
-    return this.intentName
-  }
-  get name () {
-    return this.intentName
-  }
-
-  get help () {
-    return 'Allows user to make a decision'
-  }
 }
 
 export default RecomenderModel

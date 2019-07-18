@@ -1,5 +1,4 @@
 import BaseModel from './BaseModel'
-const uuidv4 = require('uuid/v4')
 
 class CapabilitiesModel extends BaseModel {
   constructor () {
@@ -10,19 +9,14 @@ class CapabilitiesModel extends BaseModel {
       { 'portColor': '#7d4bd6', 'portId': 'Change plan' }, 
       { 'portColor': '#cc585c', 'portId': 'Change travel date' }, 
       { 'portColor': '#b1273a', 'portId': 'setup a callback' } ]
-        
+      this.tooltip="Capabilites"
+      this.category="Capabilites"
+      this.name="Capabilites"
+      this.icon="SendEmail"
+      this.figure="RoundedRectangle"
+      this.color="lightskyblue"  
   }
 
-  get category () {
-    return this.intentName
-  }
-  get name () {
-    return this.intentName
-  }
-
-  get help () {
-    return 'Describes system capabilities'
-  }
 }
 
 export default CapabilitiesModel
